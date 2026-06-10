@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace ToDoApp;
+namespace Kursovaya;
 
 /// <summary>
 /// Interaction logic for App.xaml
