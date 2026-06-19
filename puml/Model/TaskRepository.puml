@@ -1,0 +1,12 @@
+@startuml
+class TaskRepository {
+    + TaskRepository()
+    + AddTask(task:Task) : void
+    + UpdateTask(task:Task) : bool
+    + RemoveTask(task:Task) : bool
+    + GetTasks() : List<Task>
+    + Save() : void
+    + Load() : void
+    + ExportCsv() : void
+}
+@enduml

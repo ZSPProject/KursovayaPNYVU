@@ -1,0 +1,9 @@
+@startuml
+!include ./App.xaml.puml
+!include ./AssemblyInfo.puml
+!include ./Commands/RelayCommand.puml
+!include ./Model/TaskRepository.puml
+!include ./Model/Task.puml
+!include ./ViewModel/MainViewModel.puml
+!include ./View/MainWindow.xaml.puml
+@enduml

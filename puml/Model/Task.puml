@@ -1,0 +1,9 @@
+@startuml
+class Task {
+    + Title : string <<get>> <<set>> = ""
+    + Description : string <<get>> <<set>> = ""
+    + IsCompleted : bool <<get>> <<set>>
+}
+Task o-> "Id" Guid
+Task o-> "DueDate" DateTime
+@enduml

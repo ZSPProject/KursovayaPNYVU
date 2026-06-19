@@ -1,0 +1,24 @@
+@startuml
+class MainViewModel {
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + IsCompleted : bool <<get>> <<set>>
+    + SelectedFilter : string <<get>> <<set>>
+    + MainViewModel()
+    + SaveTasks() : void
+    +  <<event>> PropertyChanged : PropertyChangedEventHandler? 
+}
+class "ObservableCollection`1"<T> {
+}
+INotifyPropertyChanged <|-- MainViewModel
+MainViewModel --> "Tasks<TaskModel>" "ObservableCollection`1"
+MainViewModel --> "TasksView" ICollectionView
+MainViewModel --> "SelectedTask" TaskModel
+MainViewModel --> "DueDate" DateTime
+MainViewModel --> "AddTaskCommand" ICommand
+MainViewModel --> "UpdateTaskCommand" ICommand
+MainViewModel --> "DeleteTaskCommand" ICommand
+MainViewModel --> "SaveCommand" ICommand
+MainViewModel --> "SortByDateCommand" ICommand
+MainViewModel --> "ExportCsvCommand" ICommand
+@enduml
