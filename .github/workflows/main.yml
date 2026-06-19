@@ -14,25 +14,61 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Prepare coverage output
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\TestResults" | Out-Null
+
+      - name: Test + coverage (coverlet)
+        shell: pwsh
+        run: |
+          dotnet test ./Kursovaya/Kursovaya.Tests/Kursovaya.Tests.csproj `
+            -c Release
+
       - name: Test + coverage (opencover)
+        shell: pwsh
         run: |
           dotnet test ./Kursovaya/Kursovaya.Tests/Kursovaya.Tests.csproj `
             -c Release `
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
+            /p:CoverletOutput="$env:GITHUB_WORKSPACE\TestResults\" `
             /p:Threshold=0
-            
-      - name: ReportGenerator (coverage)
+
+      - name: List coverage outputs
+        shell: pwsh
+        run: |
+          $path = Join-Path $env:GITHUB_WORKSPACE 'TestResults'
+          Write-Host "coverage path: $path"
+          Get-ChildItem -Recurse -Force $path | Select-Object FullName
+
+      - name: Install reportgenerator
         shell: pwsh
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.2.0
           $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
 
-          $report = "$env:GITHUB_WORKSPACE\TestResults"
-          reportgenerator -reports:"$report\**\coverage.opencover.xml" -targetdir:"$report\CoverageReport" -reporttypes:Html
+      - name: ReportGenerator (HTML)
+        shell: pwsh
+        run: |
+          $root = "$env:GITHUB_WORKSPACE\TestResults"
+          reportgenerator `
+            -reports:"$root\**\*.opencover.xml" `
+            -targetdir:"$root\CoverageReport" `
+            -reporttypes:Html
 
-          Write-Host "Coverage report: $report\CoverageReport"
-          Get-ChildItem -Path "$report\CoverageReport" -Recurse | Select-Object -First 20
+      - name: Show report location
+        shell: pwsh
+        run: |
+          Write-Host "Coverage report: $env:GITHUB_WORKSPACE\TestResults\CoverageReport"
+          Get-ChildItem -Recurse -Force "$env:GITHUB_WORKSPACE\TestResults\CoverageReport" | Select-Object -First 20
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ github.workspace }}/TestResults/CoverageReport
+
 
 
 
