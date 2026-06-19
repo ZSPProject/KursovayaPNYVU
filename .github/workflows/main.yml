@@ -21,6 +21,19 @@ jobs:
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
             /p:Threshold=0
+            
+      - name: ReportGenerator (coverage)
+        shell: pwsh
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.2.0
+          $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
+
+          $report = "$env:GITHUB_WORKSPACE\TestResults"
+          reportgenerator -reports:"$report\**\coverage.opencover.xml" -targetdir:"$report\CoverageReport" -reporttypes:Html
+
+          Write-Host "Coverage report: $report\CoverageReport"
+          Get-ChildItem -Path "$report\CoverageReport" -Recurse | Select-Object -First 20
+
 
 
 
