@@ -23,4 +23,8 @@ jobs:
             /p:CoverletOutputFormat=opencover `
             /p:CoverletOutput=./TestResults/ `
             /p:Threshold=0
+      - name: Show coverage files
+        run: |
+          dir TestResults /s
+
 
