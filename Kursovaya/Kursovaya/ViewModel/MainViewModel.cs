@@ -182,10 +182,9 @@ public class MainViewModel : INotifyPropertyChanged
     {
         if (SelectedTask == null)
             return;
-
-        Tasks.Remove(SelectedTask);
-
         _repository.RemoveTask(SelectedTask);
+        Tasks.Remove(SelectedTask);
+        _repository.Save();
     }
 
     private void SortTasks()
