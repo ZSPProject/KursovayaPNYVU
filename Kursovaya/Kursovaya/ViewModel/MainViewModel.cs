@@ -129,6 +129,7 @@ public class MainViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObje
         SaveCommand = new RelayCommand(SaveTasks);
         SortByDateCommand = new RelayCommand(SortTasks);
         ExportCsvCommand = new RelayCommand(ExportCsv);
+        DueDateIsCloseNotif();
     }
 
     private bool FilterTasks(object obj)
@@ -209,6 +210,19 @@ public class MainViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObje
             "Экспорт завершён",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
+    }
+
+    private void DueDateIsCloseNotif()
+    {
+        var dateCloseTitles = (from task in Tasks where (task.DueDate.Date - DateTime.Now.Date).TotalDays < 3 && !task.IsCompleted && task.DueDate.Date > DateTime.Now.Date select task.Title).ToList();
+        if (dateCloseTitles.Any())
+        {
+            MessageBox.Show(
+                "До срока выполнения этих задач осталось меньше 3 дней:\n" + string.Join("\n", dateCloseTitles),
+                "Скоро срок выполнения!",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
     }
 
     public void SaveTasks()
