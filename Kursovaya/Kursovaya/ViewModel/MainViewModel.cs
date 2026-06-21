@@ -159,10 +159,9 @@ public class MainViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObje
             DueDate = DueDate,
             IsCompleted = IsCompleted
         };
-
-        Tasks.Add(task);
-
         _repository.AddTask(task);
+        Tasks.Add(task);
+        
     }
 
     private void UpdateTask()
