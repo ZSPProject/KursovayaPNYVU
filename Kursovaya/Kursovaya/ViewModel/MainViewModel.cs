@@ -3,14 +3,14 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
-using Kursovaya.Commands;
+using CommunityToolkit.Mvvm.Input;
 using Kursovaya.Model;
 using TaskModel = Kursovaya.Model.Task;
 using System.Windows;
 
 namespace Kursovaya.ViewModel;
 
-public class MainViewModel : INotifyPropertyChanged
+public class MainViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     private readonly TaskRepository _repository;
 
@@ -29,6 +29,8 @@ public class MainViewModel : INotifyPropertyChanged
 
             if (value != null)
             {
+                ((RelayCommand)UpdateTaskCommand).NotifyCanExecuteChanged();
+                ((RelayCommand)DeleteTaskCommand).NotifyCanExecuteChanged();
                 Title = value.Title;
                 Description = value.Description;
                 DueDate = value.DueDate;
@@ -121,12 +123,12 @@ public class MainViewModel : INotifyPropertyChanged
 
         TasksView.Filter = FilterTasks;
 
-        AddTaskCommand = new RelayCommand(_ => AddTask());
-        UpdateTaskCommand = new RelayCommand(_ => UpdateTask());
-        DeleteTaskCommand = new RelayCommand(_ => DeleteTask());
-        SaveCommand = new RelayCommand(_ => SaveTasks());
-        SortByDateCommand = new RelayCommand(_ => SortTasks());
-        ExportCsvCommand = new RelayCommand(_ => ExportCsv());
+        AddTaskCommand = new RelayCommand(AddTask);
+        UpdateTaskCommand = new RelayCommand(UpdateTask, () => SelectedTask != null);
+        DeleteTaskCommand = new RelayCommand(DeleteTask, () => SelectedTask != null);
+        SaveCommand = new RelayCommand(SaveTasks);
+        SortByDateCommand = new RelayCommand(SortTasks);
+        ExportCsvCommand = new RelayCommand(ExportCsv);
     }
 
     private bool FilterTasks(object obj)
@@ -213,15 +215,5 @@ public class MainViewModel : INotifyPropertyChanged
     public void SaveTasks()
     {
         _repository.Save();
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void OnPropertyChanged(
-        [CallerMemberName] string? name = null)
-    {
-        PropertyChanged?.Invoke(
-            this,
-            new PropertyChangedEventArgs(name));
     }
 }
